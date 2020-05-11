@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>TEST chat</title>
+</head>
+<style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      .form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      .form input { border: 0; padding: 10px; width: 80%; margin-right: 0.5%; }
+      .form button { width: 18%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+</style>
+<body>
+    <ul id="messages">
+    </ul>
+    <div class="form">
+        <input id="m" autocomplete="off" />
+        <button onclick="sendMessage();">Send</button>
+    </div>
+</body>
+<script src="./static/js/socket.io-client/dist/socket.io.js"></script>
+<script>
+var socket = io();
+(function() {
+
+    socket.on('chat-on', function(message) {
+        var message_list = document.querySelector('#messages');
+        var new_li = document.createElement('li');
+        new_li.innerText = message;
+        message_list.appendChild(new_li);
+    });
+
+    window.addEventListener('keydown', function(e) {
+        if(e.keyCode === 13) {
+            sendMessage();
+        }
+    })
+})();
+
+function sendMessage() {
+    var message_box = document.querySelector('#m');
+    socket.emit('chat-send', message_box.value);
+    message_box.value = '';
+}
+
+</script>
+</html>
